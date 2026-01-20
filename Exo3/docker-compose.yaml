@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./docker/back
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    volumes:
+      - crud_data:/data
+    environment:
+      - FLASK_ENV=development
+    networks:
+      - crud_network
+
+  frontend:
+    build:
+      context: ./docker/front
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - crud_network
+
+volumes:
+  crud_data:
+
+networks:
+  crud_network:
+    driver: bridge

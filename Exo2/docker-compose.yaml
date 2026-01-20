@@ -1,0 +1,23 @@
+version: "3.9"
+
+services:
+  backend:
+    build: 
+      context: ./docker/back
+      dockerfile: dockerfile.back
+    ports:
+      - "5000:5000"
+    volumes:
+      - db-data:/app/data
+
+  frontend:
+    build: 
+      context: ./docker/front
+      dockerfile: dockerfile.front  
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+
+volumes:
+  db-data:
