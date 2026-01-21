@@ -1,33 +1,46 @@
-version: '3.8'
+version: "3.9"
 
 services:
+  tor:
+    image: dperson/torproxy
+    container_name: tor
+    restart: unless-stopped
+    environment:
+      - LOCATION=FR
+      - STRICT=1
+      - TOR_MaxCircuitDirtiness=600
+    ports:
+      - "9050:9050" # SOCKS5
+      - "9051:9051" # Control port
+    networks:
+      - tor_net
+
   backend:
-    build:
-      context: ./docker/back
-      dockerfile: Dockerfile
+    build: 
+      context: ./docker/backend
+      dockerfile: dockerfile.back
+    container_name: backend
+    restart: unless-stopped
+    depends_on:
+      - tor
+    environment:
+      - TOR_PROXY=socks5h://tor:9050
     ports:
       - "5000:5000"
-    volumes:
-      - crud_data:/data
-    environment:
-      - FLASK_ENV=development
     networks:
-      - crud_network
+      - tor_net
 
   frontend:
-    build:
-      context: ./docker/front
-      dockerfile: Dockerfile
+    image: nginx:alpine
+    container_name: frontend
+    restart: unless-stopped
+    volumes:
+      - ./frontend:/usr/share/nginx/html:ro
     ports:
-      - "80:80"
-    depends_on:
-      - backend
+      - "8080:80"
     networks:
-      - crud_network
-
-volumes:
-  crud_data:
+      - tor_net
 
 networks:
-  crud_network:
+  tor_net:
     driver: bridge

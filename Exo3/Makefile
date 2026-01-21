@@ -16,7 +16,7 @@ clean:
 	docker-compose down -v
 	docker system prune -f
 
-restart:
+re:
 	docker-compose restart
 
 status:
