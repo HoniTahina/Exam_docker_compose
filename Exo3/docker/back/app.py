@@ -1,9 +1,10 @@
 from flask import Flask, jsonify
+from flask_cors import CORS
 import requests
 import os
 
 app = Flask(__name__)
-
+CORS(app) # Enable CORS for all routes
 TOR_PROXY = os.getenv("TOR_PROXY", "socks5h://127.0.0.1:9050")
 proxies = {"http": TOR_PROXY, "https": TOR_PROXY}
 
