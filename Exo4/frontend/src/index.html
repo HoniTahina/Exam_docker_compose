@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Utilisateurs Random via Tor</title>
+    <style>
+        li { margin-bottom: 10px; list-style: none; }
+        img { border-radius: 50%; vertical-align: middle; margin-right: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Utilisateurs Random via Tor</h1>
+    <ul id="users"></ul>
+
+    <script>
+        async function fetchUsers() {
+            try {
+                const res = await fetch("http://localhost:5000/users");
+                const users = await res.json();
+                const ul = document.getElementById("users");
+                ul.innerHTML = "";
+                users.forEach(user => {
+                    const li = document.createElement("li");
+                    li.innerHTML = `<img src="${user.photo}" alt="photo"> ${user.name}`;
+                    ul.appendChild(li);
+                });
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        fetchUsers();
+    </script>
+</body>
+</html>
